@@ -6,6 +6,8 @@
 #include "RpgNpc.h"
 #include "RpgEnemy.generated.h"
 
+class ADodgeballProjectile;
+
 UCLASS()
 class RPG_API ARpgEnemy : public ARpgNpc
 {
@@ -19,10 +21,41 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	FTimerHandle ThrowTimerHandle;
+	float ThrowingInterval = 2.f;
+	float ThrowingDelay = 0.5f;
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	bool CanSeeActor(const AActor* TargetActor);
+
+	bool LookAtActor(const AActor* TargetActor);
+
+	bool CanAttack() const;
+
+	UFUNCTION()
+	void Attack() const;
+
+	UFUNCTION()
+	void ShotBall() const;
+
+private:
+	float distance = 0.f;
+
+	UPROPERTY(EditAnywhere, Category="Attack")
+	float AttackMaxDis = 1000.f;
+
+	bool bCanSeeActor = false;
+
+	bool bPreviousCanSeeActor = false;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=DodgeBall, meta=(AllowPrivateAccess=true))
+	TSubclassOf<ADodgeballProjectile> DodgeballProjectileClass;
 };
+
+FORCEINLINE bool ARpgEnemy::CanAttack() const
+{
+	return distance <= AttackMaxDis;
+}

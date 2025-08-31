@@ -23,10 +23,10 @@ void ARpgNpc::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
-
-// Called to bind functionality to input
-void ARpgNpc::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-}
+//
+// // Called to bind functionality to input
+// void ARpgNpc::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+// {
+// 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+// }
 
