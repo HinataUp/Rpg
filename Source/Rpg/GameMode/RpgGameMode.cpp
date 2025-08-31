@@ -1,8 +1,7 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "RpgGameMode.h"
-#include "RpgPlayerController.h"
-#include "RpgCharacter.h"
+#include "Rpg/Character/Controller/RpgPlayerController.h"
 #include "UObject/ConstructorHelpers.h"
 
 ARpgGameMode::ARpgGameMode()
