@@ -24,7 +24,8 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	float Health = 100.f;
+	UPROPERTY(EditAnywhere, Category="Health", meta=(AllowPrivateAccess=true))
+	float Health = 10000.f;
 
 public:
 	void LoseHealth(float Amount);

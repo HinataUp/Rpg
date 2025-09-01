@@ -42,6 +42,7 @@ private:
 	UPROPERTY()
 	TSubclassOf<UAnimInstance> LoadedAnimBPClass;
 
+	UPROPERTY(EditDefaultsOnly, Category="Health", meta=(AllowPrivateAccess=true))
 	TObjectPtr<UHealthComponent> HealthComponent;
 
 protected:

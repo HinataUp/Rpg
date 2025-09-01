@@ -45,8 +45,10 @@ private:
 	UPROPERTY(EditAnywhere, Category="Attack")
 	float AttackMaxDis = 1000.f;
 
+	UPROPERTY(VisibleAnywhere, meta=(AllowPrivateAccess=true))
 	bool bCanSeeActor = false;
-
+	
+	UPROPERTY(VisibleAnywhere, meta=(AllowPrivateAccess=true))
 	bool bPreviousCanSeeActor = false;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=DodgeBall, meta=(AllowPrivateAccess=true))
@@ -54,7 +56,6 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = LookAt, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<ULookAtActorComponent> LookAtActorComponent;
-	
 };
 
 FORCEINLINE bool ARpgEnemy::CanAttack() const
