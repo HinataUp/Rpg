@@ -3,6 +3,7 @@
 
 #include "DodgeballProjectile.h"
 
+#include "Kismet/GameplayStatics.h"
 #include "Rpg/Character/RpgPlayer.h"
 #include "Rpg/Character/Component/HealthComponent.h"
 
@@ -42,6 +43,13 @@ void ADodgeballProjectile::Tick(float DeltaTime)
 void ADodgeballProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
                                  FVector NormalImpulse, const FHitResult& OtherHit)
 {
+	if (BounceSound != nullptr && NormalImpulse.Size() > 1000.0f)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, BounceSound, GetActorLocation(),
+		                                      1.0f, 1.0f, 0.0f,
+		                                      BounceSoundAttenuation);
+	}
+
 	ARpgPlayer* Player = Cast<ARpgPlayer>(OtherActor);
 	if (Player != nullptr)
 	{
@@ -49,6 +57,17 @@ void ADodgeballProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActo
 		{
 			HealthComponent->LoseHealth(Damage);
 		}
+
+		if (DamageSound != nullptr)
+		{
+			UGameplayStatics::PlaySound2D(this, DamageSound);
+		}
+
+		if (HitParticles != nullptr)
+		{
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HitParticles, GetActorTransform());
+		}
+
 		Destroy();
 	}
 }

@@ -38,4 +38,18 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Dodgeball", meta=(AllowPrivateAccess=true))
 	UProjectileMovementComponent* ProjectileMovement;
+
+#pragma region 飞行物音效
+	UPROPERTY(EditAnywhere, Category = Sound)
+	USoundBase* BounceSound;
+
+	UPROPERTY(EditAnywhere, Category = Sound)
+	USoundBase* DamageSound;
+
+	UPROPERTY(EditAnywhere, Category = Sound)
+	USoundAttenuation* BounceSoundAttenuation;
+
+	UPROPERTY(EditAnywhere, Category = Particles)
+	UParticleSystem* HitParticles;
+#pragma endregion
 };
