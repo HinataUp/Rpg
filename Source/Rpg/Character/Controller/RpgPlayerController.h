@@ -7,6 +7,8 @@
 #include "GameFramework/PlayerController.h"
 #include "RpgPlayerController.generated.h"
 
+class UHUDWidget;
+class URestartWidget;
 /** Forward declaration to improve compiling times */
 class UNiagaraSystem;
 class UInputMappingContext;
@@ -33,7 +35,7 @@ public:
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputMappingContext* DefaultMappingContext;
-	
+
 	/** Jump Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* SetDestinationClickAction;
@@ -47,7 +49,7 @@ protected:
 	uint32 bMoveToMouseCursor : 1;
 
 	virtual void SetupInputComponent() override;
-	
+
 	// To add mapping context
 	virtual void BeginPlay();
 
@@ -63,6 +65,22 @@ private:
 
 	bool bIsTouch; // Is it a touch device
 	float FollowTime; // For how long it has been pressed
+
+	UPROPERTY()
+	URestartWidget* RestartWidget;
+
+	UPROPERTY()
+	UHUDWidget* HUDWidget;
+
+public:
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<URestartWidget> BP_RestartWidget;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UHUDWidget> BP_HUDWidget;
+
+	void ShowRestartWidget();
+	void HideRestartWidget();
+
+	void UpdateHealthPercent(float HealthPercent);
 };
-
-

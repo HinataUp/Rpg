@@ -5,7 +5,7 @@
 #include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
 #include "TimerManager.h"
-#include "Kismet/KismetMathLibrary.h"
+#include "Component/LookAtActorComponent.h"
 #include "Rpg/Actors/DodgeballProjectile.h"
 
 
@@ -14,20 +14,26 @@ ARpgEnemy::ARpgEnemy()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	LookAtActorComponent = CreateDefaultSubobject<ULookAtActorComponent>(TEXT("Look At Actor Component"));
+	LookAtActorComponent->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
 void ARpgEnemy::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// 一定要在构造函数中 先创建组件 然后才可在beginplay中使用，否则各种错误
+	ACharacter* Player = UGameplayStatics::GetPlayerCharacter(this, 0);
+	LookAtActorComponent->SetTarget(Player);
 }
 
 // Called every frame
 void ARpgEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	const ACharacter* RpgPlayer = UGameplayStatics::GetPlayerCharacter(this, 0);
-	bCanSeeActor = LookAtActor(RpgPlayer);
+
+	bCanSeeActor = LookAtActorComponent->CanSeeTarget();
 	if (bCanSeeActor != bPreviousCanSeeActor)
 	{
 		if (bCanSeeActor)
@@ -46,43 +52,6 @@ void ARpgEnemy::Tick(float DeltaTime)
 		}
 	}
 	bPreviousCanSeeActor = bCanSeeActor;
-}
-
-bool ARpgEnemy::CanSeeActor(const AActor* TargetActor)
-{
-	const UWorld* World = GetWorld();
-	if (!World && TargetActor == nullptr) { return false; }
-	FHitResult Hit;
-	const FVector StartLocation = GetActorLocation();
-	const FVector EndLocation = TargetActor->GetActorLocation();
-	constexpr ECollisionChannel CollisionChannel = ECC_Visibility;
-	FCollisionQueryParams QueryParams;
-	QueryParams.AddIgnoredActor(this);
-	QueryParams.AddIgnoredActor(TargetActor);
-	World->LineTraceSingleByChannel(Hit, StartLocation, EndLocation, CollisionChannel, QueryParams);
-	return !Hit.bBlockingHit;
-}
-
-bool ARpgEnemy::LookAtActor(const AActor* TargetActor)
-{
-	const UWorld* World = GetWorld();
-	if (!World && TargetActor == nullptr) { return false; }
-	if (CanSeeActor(TargetActor))
-	{
-		FVector StartLocation = GetActorLocation();
-		FVector EndLocation = TargetActor->GetActorLocation();
-		distance = FVector::Dist(StartLocation, EndLocation);
-		FRotator LookAtRotator = UKismetMathLibrary::FindLookAtRotation(StartLocation, EndLocation);
-		SetActorRotation(LookAtRotator);
-
-#if WITH_EDITOR
-		FString str = "distance: " + FString::FromInt(distance);
-		GEngine->AddOnScreenDebugMessage(100, 2.f, FColor::Red, str);
-		DrawDebugLine(World, StartLocation, EndLocation, FColor::Red, false, 0, false);
-#endif
-		return true;
-	}
-	return false;
 }
 
 

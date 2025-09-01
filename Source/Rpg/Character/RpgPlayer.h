@@ -4,10 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "RpgCharacterBase.h"
+#include "Rpg/Utilities/HealthInterface.h"
 #include "RpgPlayer.generated.h"
 
+class UHealthComponent;
+
 UCLASS()
-class RPG_API ARpgPlayer : public ARpgCharacterBase
+class RPG_API ARpgPlayer : public ARpgCharacterBase, public IHealthInterface
 {
 	GENERATED_BODY()
 
@@ -23,6 +26,9 @@ public:
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 
+	virtual void OnDeath_Implementation() override;
+	virtual void OnTakeDamage_Implementation() override;
+
 private:
 	/** Top down camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -35,6 +41,8 @@ private:
 	// 存储动画蓝图类
 	UPROPERTY()
 	TSubclassOf<UAnimInstance> LoadedAnimBPClass;
+
+	TObjectPtr<UHealthComponent> HealthComponent;
 
 protected:
 	UFUNCTION(BlueprintCallable, Category = "Character Setup")

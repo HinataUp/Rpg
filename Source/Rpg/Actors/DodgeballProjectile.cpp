@@ -4,6 +4,7 @@
 #include "DodgeballProjectile.h"
 
 #include "Rpg/Character/RpgPlayer.h"
+#include "Rpg/Character/Component/HealthComponent.h"
 
 
 // Sets default values
@@ -22,7 +23,6 @@ ADodgeballProjectile::ADodgeballProjectile()
 
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
 	ProjectileMovement->InitialSpeed = 1100.f;
-	
 }
 
 // Called when the game starts or when spawned
@@ -42,8 +42,13 @@ void ADodgeballProjectile::Tick(float DeltaTime)
 void ADodgeballProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
                                  FVector NormalImpulse, const FHitResult& OtherHit)
 {
-	if (Cast<ARpgPlayer>(OtherActor) != nullptr)
+	ARpgPlayer* Player = Cast<ARpgPlayer>(OtherActor);
+	if (Player != nullptr)
 	{
+		if (UHealthComponent* HealthComponent = Player->FindComponentByClass<UHealthComponent>())
+		{
+			HealthComponent->LoseHealth(Damage);
+		}
 		Destroy();
 	}
 }

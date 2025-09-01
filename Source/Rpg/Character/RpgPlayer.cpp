@@ -2,12 +2,12 @@
 
 
 #include "RpgPlayer.h"
-
 #include "Camera/CameraComponent.h"
+#include "Component/HealthComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Controller/RpgPlayerController.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
-
 
 // Sets default values
 ARpgPlayer::ARpgPlayer()
@@ -46,6 +46,8 @@ ARpgPlayer::ARpgPlayer()
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
+
+	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("Health Component"));
 }
 
 // Called when the game starts or when spawned
@@ -61,6 +63,24 @@ void ARpgPlayer::BeginPlay()
 void ARpgPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+void ARpgPlayer::OnDeath_Implementation()
+{
+	ARpgPlayerController* PlayerController = Cast<ARpgPlayerController>(GetController());
+	if (PlayerController != nullptr)
+	{
+		PlayerController->ShowRestartWidget();
+	}
+}
+
+void ARpgPlayer::OnTakeDamage_Implementation()
+{
+	ARpgPlayerController* PlayerController = Cast<ARpgPlayerController>(GetController());
+	if (PlayerController != nullptr)
+	{
+		PlayerController->UpdateHealthPercent(HealthComponent->GetHealthPercent());
+	}
 }
 
 void ARpgPlayer::LoadSkeletalMesh(const FString& MeshPath)

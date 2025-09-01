@@ -4,8 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "RpgNpc.h"
+#include "Component/LookAtActorComponent.h"
 #include "RpgEnemy.generated.h"
 
+class ULookAtActorComponent;
 class ADodgeballProjectile;
 
 UCLASS()
@@ -29,10 +31,6 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	bool CanSeeActor(const AActor* TargetActor);
-
-	bool LookAtActor(const AActor* TargetActor);
-
 	bool CanAttack() const;
 
 	UFUNCTION()
@@ -53,9 +51,13 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=DodgeBall, meta=(AllowPrivateAccess=true))
 	TSubclassOf<ADodgeballProjectile> DodgeballProjectileClass;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = LookAt, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<ULookAtActorComponent> LookAtActorComponent;
+	
 };
 
 FORCEINLINE bool ARpgEnemy::CanAttack() const
 {
-	return distance <= AttackMaxDis;
+	return LookAtActorComponent->Distance <= AttackMaxDis;
 }
