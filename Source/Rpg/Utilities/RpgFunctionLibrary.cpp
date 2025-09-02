@@ -1,10 +1,10 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "DodgeballFunctionLibrary.h"
+#include "RpgFunctionLibrary.h"
 
-bool UDodgeballFunctionLibrary::CanSeeActor(const UWorld* World, FVector Location, const AActor* TargetActor,
-	TArray<const AActor*> IgnoreActors)
+bool URpgFunctionLibrary::CanSeeActor(const UWorld* World, FVector Location, const AActor* TargetActor,
+                                      TArray<const AActor*> IgnoreActors)
 {
 	if (!World && TargetActor == nullptr) { return false; }
 	FHitResult Hit;
@@ -14,7 +14,7 @@ bool UDodgeballFunctionLibrary::CanSeeActor(const UWorld* World, FVector Locatio
 	FCollisionQueryParams QueryParams;
 	QueryParams.AddIgnoredActors(IgnoreActors);
 	World->LineTraceSingleByChannel(Hit, Start, End, CollisionChannel, QueryParams);
-	
+
 	// Sweep Trace logic (not used, only for demonstration)
 	/*
 	// Rotation of the shape used in the Sweep Trace
@@ -28,10 +28,18 @@ bool UDodgeballFunctionLibrary::CanSeeActor(const UWorld* World, FVector Locatio
 									 Channel,
 									 Shape);
 	*/
-#if WITH_EDITOR
-	const FString Str = "distance: " + FString::FromInt(FVector::Dist(Start, End));
-	GEngine->AddOnScreenDebugMessage(100, 2.f, FColor::Red, Str);
-	DrawDebugLine(World, Start, End, FColor::Red, false, 0, false);
-#endif
+
+
 	return !Hit.bBlockingHit;
+}
+
+void URpgFunctionLibrary::DrawSightLine(const UWorld* World, FVector Start, FVector End,
+                                              FColor Color, bool bPersistentLines, float LifeTime)
+{
+
+	float dis = FVector::Dist(Start, End);
+	const FString Str = "distance: " + FString::FromInt(dis);
+	GEngine->AddOnScreenDebugMessage(100, 2.f, FColor::Red, Str);
+	DrawDebugLine(World, Start, End, Color, bPersistentLines, LifeTime);
+
 }

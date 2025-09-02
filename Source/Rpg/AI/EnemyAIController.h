@@ -6,6 +6,8 @@
 #include "AIController.h"
 #include "EnemyAIController.generated.h"
 
+class AEnemyPlayerState;
+
 UCLASS()
 class RPG_API AEnemyAIController : public AAIController
 {
@@ -19,7 +21,16 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	// 指定使用的PlayerState类
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI")
+	TSubclassOf<AEnemyPlayerState> AIPlayerStateClass;
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	virtual void InitPlayerState() override;
+
+	// 获取AI PlayerState的便捷函数
+	UFUNCTION(BlueprintCallable, Category = "AI")
+	AEnemyPlayerState* GetAIPlayerState();
 };

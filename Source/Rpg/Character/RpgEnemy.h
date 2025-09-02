@@ -7,6 +7,7 @@
 #include "Component/LookAtActorComponent.h"
 #include "RpgEnemy.generated.h"
 
+class AEnemyPlayerState;
 class ULookAtActorComponent;
 class ADodgeballProjectile;
 
@@ -22,16 +23,16 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	UFUNCTION(BlueprintCallable)
+	void LookAtTarget();
 
 	FTimerHandle ThrowTimerHandle;
-	float ThrowingInterval = 2.f;
-	float ThrowingDelay = 0.5f;
+	float ThrowingInterval = 3.f;
+	float ThrowingDelay = 1.f;
 
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-	bool CanAttack() const;
 
 	UFUNCTION()
 	void Attack() const;
@@ -39,26 +40,28 @@ public:
 	UFUNCTION()
 	void ShotBall() const;
 
+	UFUNCTION(BlueprintPure, BlueprintCallable)
+	FORCEINLINE AActor* GetTargetActor() { return TargetActor; }
+
+	UFUNCTION(BlueprintPure, BlueprintCallable)
+	bool CanMoveTo();
+
 private:
-	float distance = 0.f;
+	UPROPERTY()
+	TObjectPtr<AActor> TargetActor;
 
-	UPROPERTY(EditAnywhere, Category="Attack")
-	float AttackMaxDis = 1000.f;
-
-	UPROPERTY(VisibleAnywhere, meta=(AllowPrivateAccess=true))
-	bool bCanSeeActor = false;
-	
-	UPROPERTY(VisibleAnywhere, meta=(AllowPrivateAccess=true))
-	bool bPreviousCanSeeActor = false;
+	// 属性尽可能定义在 state里面
+	// controller 和 character 可以直接 getplayerstate ，但是 ai controller 需要设置bWantsPlayerState = true;
+	// 需要手动指定 对应的 player state （由于我们自定义了）
+	// UPROPERTY(EditAnywhere, Category="EnemyState")
+	// TObjectPtr<AEnemyPlayerState> EnemyPS;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=DodgeBall, meta=(AllowPrivateAccess=true))
 	TSubclassOf<ADodgeballProjectile> DodgeballProjectileClass;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = LookAt, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<ULookAtActorComponent> LookAtActorComponent;
-};
 
-FORCEINLINE bool ARpgEnemy::CanAttack() const
-{
-	return LookAtActorComponent->Distance <= AttackMaxDis;
-}
+	UPROPERTY()
+	bool LookingTarget = false;
+};

@@ -22,4 +22,6 @@ ARpgGameMode::ARpgGameMode()
 	{
 		PlayerControllerClass = PlayerControllerBPClass.Class;
 	}
+
+	// 这里可以定义 玩家  或者通用的 player state
 }

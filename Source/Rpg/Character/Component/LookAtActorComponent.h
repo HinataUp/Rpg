@@ -7,6 +7,8 @@
 #include "LookAtActorComponent.generated.h"
 
 
+class AEnemyPlayerState;
+
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class RPG_API ULookAtActorComponent : public USceneComponent
 {
@@ -19,20 +21,20 @@ public:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
-	float LooKAtActor() const;
+	
+	void CheckCanSeeActor() const;
 
+	UPROPERTY()
 	TObjectPtr<AActor> TargetActor;
 
-	bool bCanSeeTarget = false;
-
 public:
+
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
 	                           FActorComponentTickFunction* ThisTickFunction) override;
 
 	FORCEINLINE void SetTarget(AActor* NewTarget) { TargetActor = NewTarget; }
 
-	FORCEINLINE bool CanSeeTarget() const { return bCanSeeTarget; }
-
-	float Distance = 0.f;
+	void LookAtActor() const;
+	
 };
